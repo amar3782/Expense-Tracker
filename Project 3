@@ -1,0 +1,80 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+class Expense {
+    private String date;
+    private String category;
+    private double amount;
+
+    public Expense(String date, String category, double amount) {
+        this.date = date;
+        this.category = category;
+        this.amount = amount;
+    }
+
+    // Getters and setters
+}
+
+class User {
+    // User-related properties and methods
+}
+
+class ExpenseTracker {
+    private List<Expense> expenses;
+
+    public ExpenseTracker() {
+        this.expenses = new ArrayList<>();
+    }
+
+    public void addExpense(Expense expense) {
+        expenses.add(expense);
+    }
+
+    public List<Expense> getExpenses() {
+        return expenses;
+    }
+}
+
+class FileHandler {
+    public static void saveExpensesToFile(List<Expense> expenses, String fileName) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            oos.writeObject(expenses);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception appropriately
+        }
+    }
+
+    public static List<Expense> loadExpensesFromFile(String fileName) {
+        List<Expense> loadedExpenses = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+            loadedExpenses = (List<Expense>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace(); // Handle the exception appropriately
+        }
+        return loadedExpenses;
+    }
+}
+
+public class ExpenseTrackerApp {
+    public static void main(String[] args) {
+        ExpenseTracker expenseTracker = new ExpenseTracker();
+
+        // Example: Adding an expense
+        Expense expense1 = new Expense("2024-01-30", "Groceries", 50.0);
+        expenseTracker.addExpense(expense1);
+
+        // Save expenses to file
+        FileHandler.saveExpensesToFile(expenseTracker.getExpenses(), "expenses.dat");
+
+        // Load expenses from file
+        List<Expense> loadedExpenses = FileHandler.loadExpensesFromFile("expenses.dat");
+
+        // Display loaded expenses
+        System.out.println("Loaded Expenses:");
+        for (Expense expense : loadedExpenses) {
+            System.out.println("Date: " + expense.getDate() + ", Category: " + expense.getCategory() +
+                    ", Amount: " + expense.getAmount());
+        }
+    }
+}
